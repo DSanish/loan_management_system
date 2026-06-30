@@ -20,6 +20,7 @@ import Dashboard from "../pages/dashboard/Dashboard";
 import CustomerList from "../pages/customers/CustomerList";
 import CustomerDetails from "../pages/customers/CustomerDetails";
 import AddCustomer from "../pages/customers/AddCustomer";
+import EditCustomer from "../pages/customers/EditCustomer";
 
 // Loans
 import LoanList from "../pages/loans/LoanList";
@@ -40,6 +41,7 @@ import Settings from "../pages/settings/Settings";
 
 // 404
 import NotFound from "../pages/NotFound";
+
 
 const AppRouter = () => {
   return (
@@ -78,6 +80,7 @@ const AppRouter = () => {
         <Route path="/customers" element={<CustomerList />} />
         <Route path="/customers/new" element={<AddCustomer />} />
         <Route path="/customers/:id" element={<CustomerDetails />} />
+        <Route path="/customers/:id/edit" element={<EditCustomer />}/>
 
         <Route path="/loans" element={<LoanList />} />
         <Route path="/loans/new" element={<NewLoan />} />
