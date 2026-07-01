@@ -1,5 +1,5 @@
 import { Bell, Search, UserCircle, LogOut } from "lucide-react";
-import { useAuthStore } from "../../store/authStore";
+import useAuthStore  from "../../store/authStore";
 
 const Navbar = () => {
   const { user, logout } = useAuthStore();

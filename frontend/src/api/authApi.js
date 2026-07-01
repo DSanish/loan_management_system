@@ -61,7 +61,21 @@ import apiClient from "./client";
  * Login User
  */
 export const loginUser = async (credentials) => {
-  const { data } = await apiClient.post("/auth/login", credentials);
+  const formData = new URLSearchParams();
+
+  formData.append("username", credentials.email);
+  formData.append("password", credentials.password);
+
+  const { data } = await apiClient.post(
+    "/auth/login",
+    formData,
+    {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    }
+  );
+
   return data;
 };
 

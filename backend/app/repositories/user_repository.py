@@ -10,8 +10,18 @@ class UserRepository(BaseRepository[User]):
         super().__init__(User, db)
 
     async def get_by_email(self, email: str) -> Optional[User]:
-        result = await self.db.execute(select(User).where(User.email == email))
-        return result.scalar_one_or_none()
+
+      print("Searching Email:", repr(email))
+
+      result = await self.db.execute(
+        select(User).where(User.email == email)
+      )
+
+      user = result.scalar_one_or_none()
+
+      print("Repository Found:", user)
+
+      return user
 
     async def get_by_username(self, username: str) -> Optional[User]:
         result = await self.db.execute(select(User).where(User.username == username))

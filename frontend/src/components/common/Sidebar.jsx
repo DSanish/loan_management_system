@@ -10,7 +10,7 @@ import {
   LogOut,
 } from "lucide-react";
 
-import { useAuthStore } from "../../store/authStore";
+import  useAuthStore  from "../../store/authStore";
 
 const menuItems = [
   {

@@ -19,37 +19,81 @@ logger = get_logger(__name__)
 
 
 @router.post("/login", response_model=Token)
-async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: AsyncSession = Depends(get_db)):
+async def login(
+    form_data: OAuth2PasswordRequestForm = Depends(),
+    db: AsyncSession = Depends(get_db),
+):
     user_repo = UserRepository(db)
+
+    # Try Email
     user = await user_repo.get_by_email(form_data.username)
+
+    # If not found, try Username
     if not user:
         user = await user_repo.get_by_username(form_data.username)
 
-    if not user or not verify_password(form_data.password, user.hashed_password):
+    # ==========================
+    # DEBUG
+    # ==========================
+    print("========== LOGIN DEBUG ==========")
+    print("Username received:", form_data.username)
+    print("Password received:", form_data.password)
+    print("User found:", user is not None)
+
+    if user:
+        print("DB Email:", user.email)
+        print("DB Username:", user.username)
+        print(
+            "Password Match:",
+            verify_password(form_data.password, user.hashed_password),
+        )
+
+    print("=================================")
+    # ==========================
+
+    if not user or not verify_password(
+        form_data.password,
+        user.hashed_password,
+    ):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect email or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
+
     if not user.is_active:
-        raise HTTPException(status_code=400, detail="Inactive account")
+        raise HTTPException(
+            status_code=400,
+            detail="Inactive account",
+        )
 
     from datetime import datetime
+
     user.last_login = datetime.utcnow()
     user.failed_login_attempts = 0
+
     await db.flush()
 
-    access_token = create_access_token(data={"sub": str(user.id)})
-    refresh_token = create_refresh_token(data={"sub": str(user.id)})
+    access_token = create_access_token(
+        data={"sub": str(user.id)}
+    )
 
-    logger.info("user_logged_in", user_id=user.id, email=user.email)
+    refresh_token = create_refresh_token(
+        data={"sub": str(user.id)}
+    )
+
+    logger.info(
+        "user_logged_in",
+        user_id=user.id,
+        email=user.email,
+    )
+
     return {
         "access_token": access_token,
         "refresh_token": refresh_token,
         "token_type": "bearer",
         "expires_in": settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
     }
-
 
 @router.post("/refresh", response_model=Token)
 async def refresh_token(data: TokenRefresh, db: AsyncSession = Depends(get_db)):
