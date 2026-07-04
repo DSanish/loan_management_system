@@ -1,39 +1,40 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Plus, Search, Eye, Pencil, Trash2 } from "lucide-react";
-import CustomerTable from "../../components/customers/CustomerTable";
+import { Plus, Search } from "lucide-react";
 
-const customers = [
-  {
-    id: 1,
-    name: "Rahul Sharma",
-    phone: "9876543210",
-    email: "rahul@gmail.com",
-    loan: "₹2,50,000",
-    status: "Active",
-  },
-  {
-    id: 2,
-    name: "Amit Kumar",
-    phone: "9123456789",
-    email: "amit@gmail.com",
-    loan: "₹1,80,000",
-    status: "Pending",
-  },
-  {
-    id: 3,
-    name: "Priya Singh",
-    phone: "9988776655",
-    email: "priya@gmail.com",
-    loan: "₹3,20,000",
-    status: "Closed",
-  },
-];
+import CustomerTable from "../../components/customers/CustomerTable";
+import { getCustomers } from "../../api/customerApi";
 
 const CustomerList = () => {
+  const [customers, setCustomers] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const loadCustomers = async () => {
+    try {
+      const data = await getCustomers();
+
+      if (Array.isArray(data)) {
+        setCustomers(data);
+      } else if (Array.isArray(data.items)) {
+        setCustomers(data.items);
+      } else {
+        setCustomers([]);
+      }
+    } catch (err) {
+      console.error(err);
+      setCustomers([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadCustomers();
+  }, []);
+
   return (
     <div className="space-y-6">
 
-      {/* Header */}
       <div className="flex justify-between items-center">
 
         <div>
@@ -48,7 +49,7 @@ const CustomerList = () => {
 
         <Link
           to="/customers/new"
-          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-lg transition"
+          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-lg"
         >
           <Plus size={18} />
           Add Customer
@@ -56,12 +57,14 @@ const CustomerList = () => {
 
       </div>
 
-      {/* Search */}
       <div className="bg-white p-4 rounded-xl shadow">
 
         <div className="flex items-center border rounded-lg px-4 py-2">
 
-          <Search size={20} className="text-gray-400" />
+          <Search
+            size={20}
+            className="text-gray-400"
+          />
 
           <input
             type="text"
@@ -73,8 +76,13 @@ const CustomerList = () => {
 
       </div>
 
-      {/* Table */}
-       <CustomerTable customers={customers} />
+      {loading ? (
+        <div className="bg-white rounded-xl shadow p-8 text-center">
+          Loading Customers...
+        </div>
+      ) : (
+        <CustomerTable customers={customers} />
+      )}
 
     </div>
   );

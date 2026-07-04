@@ -42,24 +42,34 @@ const LoanTable = ({ loans = [], onDelete }) => {
                   {loan.loan_number}
                 </td>
 
-                <td className="px-6 py-4">
-                  {loan.customer_name || "-"}
-                </td>
+               <td className="px-6 py-4">
+                  {loan.customer
+                    ? `${loan.customer.first_name} ${loan.customer.last_name}`
+                    : "-"}
+               </td>
 
                 <td className="px-6 py-4">
                   {loan.loan_type}
                 </td>
 
                 <td className="px-6 py-4">
-                  ₹{loan.principal_amount}
+                  ₹{Number(loan.principal_amount).toLocaleString()}
                 </td>
 
                 <td className="px-6 py-4">
-                  {loan.interest_rate}%
+                  {Number(loan.interest_rate).toFixed(2)}%
                 </td>
 
                 <td className="px-6 py-4">
-                  <span className="px-3 py-1 rounded-full bg-green-100 text-green-700 text-sm">
+                  <span
+                    className={`px-3 py-1 rounded-full text-sm ${
+                      loan.status === "active"
+                        ? "bg-green-100 text-green-700"
+                        : loan.status === "pending"
+                        ? "bg-yellow-100 text-yellow-700"
+                        : "bg-red-100 text-red-700"
+                 }`}
+                >
                     {loan.status}
                   </span>
                 </td>
