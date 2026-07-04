@@ -26,8 +26,10 @@ async def list_customers(
     repo = CustomerRepository(db)
     skip = (page - 1) * page_size
     customers, total = await repo.search(
-        query=q, city=city, state=state, is_active=is_active, skip=skip, limit=page_size
+        query=q, city=city, state=state, is_active=is_active, skip=skip, limit=page_size,
     )
+    print("TOTAL =", total)
+    print("CUSTOMERS =", customers)
 
     items = []
     for c in customers:

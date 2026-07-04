@@ -1,7 +1,10 @@
 import { Link } from "react-router-dom";
 import { Eye, Pencil, Trash2 } from "lucide-react";
 
-const CustomerTable = ({ customers = [] }) => {
+const CustomerTable = ({
+  customers = [],
+  onDelete,
+}) => {
   return (
     <div className="bg-white rounded-xl shadow overflow-hidden">
 
@@ -12,7 +15,11 @@ const CustomerTable = ({ customers = [] }) => {
           <tr>
 
             <th className="text-left px-6 py-4">
-              Customer
+              Customer No.
+            </th>
+
+            <th className="text-left px-6 py-4">
+              Name
             </th>
 
             <th className="text-left px-6 py-4">
@@ -21,10 +28,6 @@ const CustomerTable = ({ customers = [] }) => {
 
             <th className="text-left px-6 py-4">
               Email
-            </th>
-
-            <th className="text-left px-6 py-4">
-              Loan
             </th>
 
             <th className="text-left px-6 py-4">
@@ -41,74 +44,98 @@ const CustomerTable = ({ customers = [] }) => {
 
         <tbody>
 
-          {customers.map((customer) => (
+          {customers.length === 0 ? (
 
-            <tr
-              key={customer.id}
-              className="border-t hover:bg-gray-50"
-            >
+            <tr>
 
-              <td className="px-6 py-4 font-medium">
-                {customer.name}
-              </td>
-
-              <td className="px-6 py-4">
-                {customer.phone}
-              </td>
-
-              <td className="px-6 py-4">
-                {customer.email}
-              </td>
-
-              <td className="px-6 py-4">
-                {customer.loan}
-              </td>
-
-              <td className="px-6 py-4">
-
-                <span
-                  className={`px-3 py-1 rounded-full text-sm ${
-                    customer.status === "Active"
-                      ? "bg-green-100 text-green-700"
-                      : customer.status === "Pending"
-                      ? "bg-yellow-100 text-yellow-700"
-                      : "bg-gray-200 text-gray-700"
-                  }`}
-                >
-                  {customer.status}
-                </span>
-
-              </td>
-
-              <td className="px-6 py-4">
-
-                <div className="flex justify-center gap-3">
-
-                  <Link
-                    to={`/customers/${customer.id}`}
-                    className="text-blue-600 hover:text-blue-800"
-                  >
-                    <Eye size={18} />
-                  </Link>
-
-                  <Link
-                    to={`/customers/${customer.id}/edit`}
-                    className="text-green-600 hover:text-green-800"
-                  >
-                    <Pencil size={18} />
-                  </Link>
-
-                  <button className="text-red-600 hover:text-red-800">
-                    <Trash2 size={18} />
-                  </button>
-
-                </div>
-
+              <td
+                colSpan="6"
+                className="text-center py-8 text-gray-500"
+              >
+                No Customers Found
               </td>
 
             </tr>
 
-          ))}
+          ) : (
+
+            customers.map((customer) => (
+
+              <tr
+                key={customer.id}
+                className="border-t hover:bg-gray-50"
+              >
+
+                <td className="px-6 py-4">
+                  {customer.customer_number}
+                </td>
+
+               <td className="px-6 py-4 font-medium">
+                  {[customer.first_name, customer.last_name]
+                  .filter(Boolean)
+                  .join(" ")}
+               </td>
+
+                <td className="px-6 py-4">
+                  {customer.phone}
+                </td>
+
+                <td className="px-6 py-4">
+                  {customer.email}
+                </td>
+
+                <td className="px-6 py-4">
+
+                  <span
+                    className={`px-3 py-1 rounded-full text-sm ${
+                      customer.is_active
+                        ? "bg-green-100 text-green-700"
+                        : "bg-red-100 text-red-700"
+                    }`}
+                  >
+                    {customer.is_active
+                      ? "Active"
+                      : "Inactive"}
+                  </span>
+
+                </td>
+
+                <td className="px-6 py-4">
+
+                  <div className="flex justify-center gap-3">
+
+                    <Link
+                      to={`/customers/${customer.id}`}
+                      className="text-blue-600 hover:text-blue-800"
+                    >
+                      <Eye size={18} />
+                    </Link>
+
+                    <Link
+                      to={`/customers/${customer.id}/edit`}
+                      className="text-green-600 hover:text-green-800"
+                    >
+                      <Pencil size={18} />
+                    </Link>
+
+                    <button
+                      onClick={() =>
+                        onDelete?.(customer.id)
+                      }
+                      className="text-red-600 hover:text-red-800"
+                    >
+                      <Trash2 size={18} />
+                    </button>
+
+                  </div>
+
+                </td>
+
+              </tr>
+
+            ))
+
+          )}
 
         </tbody>
 
