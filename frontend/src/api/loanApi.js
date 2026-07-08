@@ -1,33 +1,72 @@
 import client from "./client";
 
-// Get all loans
+/**
+ * Get All Loans
+ */
 export const getLoans = async (params = {}) => {
-  const response = await client.get("/loans", {
+  const { data } = await client.get("/loans", {
     params,
   });
-  return response.data;
+
+  return data;
 };
 
-// Get single loan
-export const getLoan = async (id) => {
-  const response = await client.get(`/loans/${id}`);
-  return response.data;
+/**
+ * Get Single Loan
+ */
+export const getLoanById = async (id) => {
+  const { data } = await client.get(`/loans/${id}`);
+
+  return data;
 };
 
-// Create loan
+/**
+ * Create Loan
+ */
 export const createLoan = async (loanData) => {
-  const response = await client.post("/loans", loanData);
-  return response.data;
+  const { data } = await client.post(
+    "/loans",
+    loanData
+  );
+
+  return data;
 };
 
-// Update loan
-export const updateLoan = async (id, loanData) => {
-  const response = await client.put(`/loans/${id}`, loanData);
-  return response.data;
+/**
+ * Update Loan
+ */
+export const updateLoan = async (
+  id,
+  loanData
+) => {
+  const { data } = await client.patch(
+    `/loans/${id}`,
+    loanData
+  );
+
+  return data;
 };
 
-// Delete loan
+/**
+ * Delete Loan
+ */
 export const deleteLoan = async (id) => {
-  const response = await client.delete(`/loans/${id}`);
-  return response.data;
+  const { data } = await client.delete(
+    `/loans/${id}`
+  );
+
+  return data;
 };
+
+/**
+ * Export
+ */
+const loanApi = {
+  getLoans,
+  getLoanById,
+  createLoan,
+  updateLoan,
+  deleteLoan,
+};
+
+export default loanApi;
