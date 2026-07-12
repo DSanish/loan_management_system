@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Plus, Eye } from "lucide-react";
-import { Eye, Pencil } from "lucide-react";
+import { Plus, Eye, pencil, trash2 } from "lucide-react";
+
 import { getPayments } from "../../api/paymentApi";
 
 const PaymentList = () => {
