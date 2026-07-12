@@ -1,8 +1,16 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Plus, Eye, pencil, trash2 } from "lucide-react";
+import {
+  Plus,
+  Eye,
+  Pencil,
+  Trash2,
+} from "lucide-react";
 
-import { getPayments } from "../../api/paymentApi";
+import {
+  getPayments,
+  deletePayment,
+} from "../../api/paymentApi";
 
 const PaymentList = () => {
   const [payments, setPayments] = useState([]);
@@ -16,7 +24,6 @@ const PaymentList = () => {
     try {
       const res = await getPayments();
 
-      // Backend may return {items:[...]} or [...]
       if (Array.isArray(res)) {
         setPayments(res);
       } else {
@@ -30,9 +37,32 @@ const PaymentList = () => {
     }
   };
 
+  const handleDelete = async (id) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this payment?"
+    );
+
+    if (!confirmDelete) return;
+
+    try {
+      await deletePayment(id);
+
+      alert("Payment deleted successfully");
+
+      loadPayments();
+    } catch (err) {
+      console.error(err);
+
+      alert(
+        err.response?.data?.detail ||
+          "Unable to delete payment."
+      );
+    }
+  };
+
   if (loading) {
     return (
-      <div className="bg-white rounded-xl shadow p-8">
+      <div className="bg-white rounded-xl shadow p-8 text-center">
         Loading Payments...
       </div>
     );
@@ -40,6 +70,8 @@ const PaymentList = () => {
 
   return (
     <div className="space-y-6">
+
+      {/* Header */}
 
       <div className="flex justify-between items-center">
 
@@ -57,11 +89,13 @@ const PaymentList = () => {
           to="/payments/new"
           className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2"
         >
-          <Plus size={18}/>
+          <Plus size={18} />
           New Payment
         </Link>
 
       </div>
+
+      {/* Table */}
 
       <div className="bg-white rounded-xl shadow overflow-hidden">
 
@@ -99,7 +133,7 @@ const PaymentList = () => {
 
                 <tr
                   key={payment.id}
-                  className="border-t"
+                  className="border-t hover:bg-gray-50"
                 >
 
                   <td className="p-3">
@@ -107,14 +141,14 @@ const PaymentList = () => {
                   </td>
 
                   <td className="p-3">
-                    {payment.loan?.loan_number}
+                    {payment.loan?.loan_number || payment.loan_id}
                   </td>
 
                   <td className="p-3">
                     ₹ {payment.amount}
                   </td>
 
-                  <td className="p-3">
+                  <td className="p-3 capitalize">
                     {payment.status}
                   </td>
 
@@ -122,23 +156,42 @@ const PaymentList = () => {
                     {payment.due_date}
                   </td>
 
-                  <td className="p-3 text-center">
-                    <div className="flex justify-center gap-3">
+                  <td className="p-3">
+
+                    <div className="flex justify-center gap-4">
+
+                      {/* View */}
 
                       <Link
                         to={`/payments/${payment.id}`}
-                        className="text-blue-600"
+                        className="text-blue-600 hover:text-blue-800"
+                        title="View"
                       >
-                        <Eye size={18}/>
+                        <Eye size={18} />
                       </Link>
+
+                      {/* Edit */}
 
                       <Link
-                          to={`/payments/edit/${payment.id}`}
-                          className="text-green-600"
+                        to={`/payments/edit/${payment.id}`}
+                        className="text-green-600 hover:text-green-800"
+                        title="Edit"
                       >
-                        <Pencil size={18}/>
-
+                        <Pencil size={18} />
                       </Link>
+
+                      {/* Delete */}
+
+                      <button
+                        onClick={() =>
+                          handleDelete(payment.id)
+                        }
+                        className="text-red-600 hover:text-red-800"
+                        title="Delete"
+                      >
+                        <Trash2 size={18} />
+                      </button>
+
                     </div>
 
                   </td>
