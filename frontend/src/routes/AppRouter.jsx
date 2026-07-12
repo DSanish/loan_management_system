@@ -30,6 +30,9 @@ import EditLoan from "../pages/loans/EditLoan";
 
 // Payments
 import PaymentList from "../pages/payments/PaymentList";
+import NewPayment from "../pages/payments/NewPayment";
+import PaymentDetails from "../pages/payments/PaymentDetails";
+import EditPayment from "../pages/payments/EditPayment";
 
 // Collections
 import Collections from "../pages/collections/Collections";
@@ -88,6 +91,9 @@ const AppRouter = () => {
 
         {/* Payments */}
         <Route path="/payments" element={<PaymentList />} />
+        <Route path="/payments/new" element={<NewPayment />} />
+        <Route path="/payments/:id" element={<PaymentDetails />} />
+        <Route path="/payments/edit/:id" element={<EditPayment />} />
 
         {/* Collections */}
         <Route path="/collections" element={<Collections />} />
