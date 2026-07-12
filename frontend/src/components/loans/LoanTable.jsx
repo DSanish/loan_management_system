@@ -85,14 +85,14 @@ const LoanTable = ({ loans = [], onDelete }) => {
                     />
                   </Link>
 
-                  <Link
-                    to={`/loans/edit/${loan.id}`}
-                  >
-                    <Pencil
-                      size={18}
-                      className="text-green-600"
-                    />
-                  </Link>
+                  {(loan.status === "draft" || loan.status === "submitted") && (
+                   <Link to={`/loans/edit/${loan.id}`}>
+                   <Pencil
+                     size={18}
+                     className="text-green-600"
+                   />
+                   </Link>
+                  )}
 
                   <button
                     onClick={() => onDelete?.(loan.id)}

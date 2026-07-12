@@ -111,14 +111,44 @@ async def update_loan(
     current_user: User = Depends(get_current_user),
 ):
     repo = LoanRepository(db)
+
+    # Check loan exists
     loan = await repo.get_by_id(loan_id)
     if not loan:
-        raise HTTPException(status_code=404, detail="Loan not found")
-    if loan.status not in [LoanStatus.DRAFT, LoanStatus.SUBMITTED]:
-        raise HTTPException(status_code=400, detail="Loan cannot be modified in current status")
-    update_data = data.dict(exclude_unset=True)
-    return await repo.update(loan_id, update_data)
+        raise HTTPException(
+            status_code=404,
+            detail="Loan not found"
+        )
 
+    # Only Draft and Submitted loans can be edited
+    editable_status = [
+        LoanStatus.DRAFT,
+        LoanStatus.SUBMITTED,
+    ]
+
+    if loan.status not in editable_status:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Loan cannot be modified because current status is '{loan.status.value}'. "
+                   "Only Draft and Submitted loans can be edited."
+        )
+
+    update_data = data.model_dump(exclude_unset=True)
+
+    updated_loan = await repo.update(
+        loan_id,
+        update_data,
+    )
+
+    updated_loan = await repo.get_with_details(loan_id)
+
+    if not updated_loan:
+     raise HTTPException(
+        status_code=404,
+        detail="Loan not found"
+    )
+
+    return updated_loan
 
 @router.post("/{loan_id}/approve", response_model=LoanResponse)
 async def approve_loan(

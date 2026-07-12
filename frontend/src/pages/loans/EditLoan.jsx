@@ -69,12 +69,19 @@ const EditLoan = () => {
         tenure_months: Number(formData.tenure_months),
         purpose: formData.purpose,
         collateral_type: formData.collateral_type,
-        collateral_value: Number(formData.collateral_value),
-        processing_fee: Number(formData.processing_fee),
-        insurance_amount: Number(formData.insurance_amount),
-        assigned_officer_id: Number(formData.assigned_officer_id),
-      });
+        collateral_value: Number(formData.collateral_value || 0),
+        processing_fee: Number(formData.processing_fee || 0),
+        insurance_amount: Number(formData.insurance_amount || 0),
 
+        ...(formData.assigned_officer_id
+          ? {
+             assigned_officer_id: Number(
+                formData.assigned_officer_id
+             ),
+            }
+         : {}),
+     });
+     
       alert("Loan Updated Successfully");
 
       navigate("/loans");

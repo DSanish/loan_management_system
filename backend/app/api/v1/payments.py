@@ -31,10 +31,7 @@ async def list_payments(
         filters["status"] = status
     payments, total = await repo.get_all(skip=skip, limit=page_size, filters=filters)
 
-    payment_list = [
-       PaymentResponse.model_validate(payment)
-       for payment in payments
-    ]
+  
 
     return {
       "total": total,
@@ -42,9 +39,12 @@ async def list_payments(
       "page_size": page_size,
       "pages": math.ceil(total / page_size) if total > 0 else 1,
       "items": [
-       PaymentResponse.model_validate(p)
+       PaymentResponse.model_validate(
+           payments,
+           from_attributes=True
+       )
        for p in payments
-    ]
+    ],
 }
 
 @router.post("", response_model=PaymentResponse, status_code=201)
