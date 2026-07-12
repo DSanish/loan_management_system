@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Plus, Eye } from "lucide-react";
-
+import { Eye, Pencil } from "lucide-react";
 import { getPayments } from "../../api/paymentApi";
 
 const PaymentList = () => {
@@ -123,13 +123,23 @@ const PaymentList = () => {
                   </td>
 
                   <td className="p-3 text-center">
+                    <div className="flex justify-center gap-3">
 
-                    <Link
-                      to={`/payments/${payment.id}`}
-                      className="text-blue-600"
-                    >
-                      <Eye size={18}/>
-                    </Link>
+                      <Link
+                        to={`/payments/${payment.id}`}
+                        className="text-blue-600"
+                      >
+                        <Eye size={18}/>
+                      </Link>
+
+                      <Link
+                          to={`/payments/edit/${payment.id}`}
+                          className="text-green-600"
+                      >
+                        <Pencil size={18}/>
+
+                      </Link>
+                    </div>
 
                   </td>
 
