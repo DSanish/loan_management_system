@@ -5,6 +5,8 @@ import {
   Eye,
   Pencil,
   Trash2,
+  Search,
+  RotateCcw,
 } from "lucide-react";
 
 import {
@@ -16,15 +18,31 @@ const PaymentList = () => {
   const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const [search, setSearch] = useState("");
+  const [status, setStatus] = useState("");
+
   useEffect(() => {
     loadPayments();
   }, []);
 
-  const loadPayments = async () => {
+  const loadPayments = async (
+    searchValue = search,
+    statusValue = status
+  ) => {
     try {
       setLoading(true);
 
-      const res = await getPayments();
+      const params = {};
+
+      if (searchValue.trim() !== "") {
+        params.query = searchValue;
+      }
+
+      if (statusValue !== "") {
+        params.status = statusValue;
+      }
+
+      const res = await getPayments(params);
 
       if (Array.isArray(res)) {
         setPayments(res);
@@ -39,6 +57,16 @@ const PaymentList = () => {
     }
   };
 
+  const handleSearch = () => {
+    loadPayments(search, status);
+  };
+
+  const handleClear = () => {
+    setSearch("");
+    setStatus("");
+    loadPayments("", "");
+  };
+
   const handleDelete = async (id) => {
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this payment?"
@@ -51,7 +79,7 @@ const PaymentList = () => {
 
       alert("Payment deleted successfully");
 
-      await loadPayments();
+      loadPayments(search, status);
     } catch (err) {
       console.error(err);
 
@@ -97,6 +125,52 @@ const PaymentList = () => {
 
       </div>
 
+      {/* Search Section */}
+
+      <div className="bg-white rounded-xl shadow p-5">
+
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+
+          <input
+            type="text"
+            placeholder="Search Payment / Loan Number"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="border rounded-lg p-3"
+          />
+
+          <select
+            value={status}
+            onChange={(e) => setStatus(e.target.value)}
+            className="border rounded-lg p-3"
+          >
+            <option value="">All Status</option>
+            <option value="pending">Pending</option>
+            <option value="paid">Paid</option>
+            <option value="overdue">Overdue</option>
+            <option value="waived">Waived</option>
+          </select>
+
+          <button
+            onClick={handleSearch}
+            className="bg-blue-600 hover:bg-blue-700 text-white rounded-lg flex items-center justify-center gap-2"
+          >
+            <Search size={18} />
+            Search
+          </button>
+
+          <button
+            onClick={handleClear}
+            className="bg-gray-500 hover:bg-gray-600 text-white rounded-lg flex items-center justify-center gap-2"
+          >
+            <RotateCcw size={18} />
+            Clear
+          </button>
+
+        </div>
+
+      </div>
+
       {/* Table */}
 
       <div className="bg-white rounded-xl shadow overflow-hidden">
@@ -104,14 +178,17 @@ const PaymentList = () => {
         <table className="w-full">
 
           <thead className="bg-gray-100">
+
             <tr>
               <th className="p-3 text-left">ID</th>
+              <th className="p-3 text-left">Payment No.</th>
               <th className="p-3 text-left">Loan</th>
               <th className="p-3 text-left">Amount</th>
               <th className="p-3 text-left">Status</th>
               <th className="p-3 text-left">Due Date</th>
               <th className="p-3 text-center">Action</th>
             </tr>
+
           </thead>
 
           <tbody>
@@ -120,7 +197,7 @@ const PaymentList = () => {
 
               <tr>
                 <td
-                  colSpan={6}
+                  colSpan={7}
                   className="text-center py-10"
                 >
                   No Payments Found
@@ -141,6 +218,10 @@ const PaymentList = () => {
                   </td>
 
                   <td className="p-3">
+                    {payment.payment_number}
+                  </td>
+
+                  <td className="p-3">
                     {payment.loan?.loan_number || payment.loan_id}
                   </td>
 
@@ -157,39 +238,32 @@ const PaymentList = () => {
                   </td>
 
                   <td className="p-3">
-                    <div className="flex justify-center gap-4">
 
-                      {/* View */}
+                    <div className="flex justify-center gap-4">
 
                       <Link
                         to={`/payments/${payment.id}`}
                         className="text-blue-600 hover:text-blue-800"
-                        title="View"
                       >
                         <Eye size={18} />
                       </Link>
 
-                      {/* Edit */}
-
                       <Link
                         to={`/payments/edit/${payment.id}`}
                         className="text-green-600 hover:text-green-800"
-                        title="Edit"
                       >
                         <Pencil size={18} />
                       </Link>
 
-                      {/* Delete */}
-
                       <button
                         onClick={() => handleDelete(payment.id)}
                         className="text-red-600 hover:text-red-800"
-                        title="Delete"
                       >
                         <Trash2 size={18} />
                       </button>
 
                     </div>
+
                   </td>
 
                 </tr>

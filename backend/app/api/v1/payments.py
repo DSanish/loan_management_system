@@ -26,6 +26,7 @@ router = APIRouter(prefix="/payments", tags=["Payments"])
 async def list_payments(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
+    query: Optional[str] = None,
     loan_id: Optional[int] = None,
     status: Optional[PaymentStatus] = None,
     db: AsyncSession = Depends(get_db),
@@ -35,34 +36,27 @@ async def list_payments(
 
     skip = (page - 1) * page_size
 
-    filters = {}
-
-    if loan_id:
-        filters["loan_id"] = loan_id
-
-    if status:
-        filters["status"] = status
-
-    payments, total = await repo.get_all(
+    payments, total = await repo.search(
+        query=query,
+        loan_id=loan_id,
+        status=status,
         skip=skip,
         limit=page_size,
-        filters=filters,
     )
 
     return {
         "total": total,
         "page": page,
         "page_size": page_size,
-        "pages": math.ceil(total / page_size) if total else 1,
+        "pages": math.ceil(total / page_size) if total > 0 else 1,
         "items": [
             PaymentResponse.model_validate(
-                p,
-                from_attributes=True
+                payment,
+                from_attributes=True,
             )
-            for p in payments
+            for payment in payments
         ],
     }
-
 
 # ===============================
 # Record Payment
