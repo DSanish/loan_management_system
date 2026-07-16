@@ -292,69 +292,66 @@ class PaymentRepository(BaseRepository[Payment]):
             f"{str(count + 100001).zfill(6)}"
         )
     
-# ===========================
-# Search Payments
-# ===========================
-
-async def search(
-    self,
-    query: str = None,
-    loan_id: int = None,
-    status: PaymentStatus = None,
-    skip: int = 0,
-    limit: int = 20,
-):
-
-    stmt = (
-        select(Payment)
-        .options(
-            joinedload(Payment.loan)
-            .joinedload(Loan.customer),
-
-            joinedload(Payment.loan)
-            .joinedload(Loan.assigned_officer),
-        )
-    )
-
-    count_stmt = select(func.count()).select_from(Payment)
-
-    filters = []
-
-    if query:
-        filters.append(
-            or_(
-                Payment.payment_number.ilike(f"%{query}%"),
-                Loan.loan_number.ilike(f"%{query}%"),
+    # ===========================
+    # Search Payments
+    # ===========================
+    
+    async def search(
+        self,
+        query: str = None,
+        loan_id: int = None,
+        status: PaymentStatus = None,
+        skip: int = 0,
+        limit: int = 20,
+    ):
+    
+        stmt = (
+            select(Payment)
+            .options(
+                joinedload(Payment.loan)
+                .joinedload(Loan.customer),
+    
+                joinedload(Payment.loan)
+                .joinedload(Loan.assigned_officer),
             )
         )
-
-        stmt = stmt.join(Loan)
-
-    if loan_id:
-        filters.append(
-            Payment.loan_id == loan_id
+    
+        count_stmt = select(func.count()).select_from(Payment)
+    
+        filters = []
+    
+        if query:
+            stmt = stmt.join(Loan)
+            count_stmt = count_stmt.join(Loan)
+    
+            filters.append(
+                or_(
+                    Payment.payment_number.ilike(f"%{query}%"),
+                    Loan.loan_number.ilike(f"%{query}%"),
+                )
+            )
+    
+        if loan_id:
+            filters.append(Payment.loan_id == loan_id)
+    
+        if status:
+            filters.append(Payment.status == status)
+    
+        if filters:
+            stmt = stmt.where(and_(*filters))
+            count_stmt = count_stmt.where(and_(*filters))
+    
+        total = (
+            await self.db.execute(count_stmt)
+        ).scalar()
+    
+        stmt = (
+            stmt
+            .order_by(Payment.created_at.desc())
+            .offset(skip)
+            .limit(limit)
         )
-
-    if status:
-        filters.append(
-            Payment.status == status
-        )
-
-    if filters:
-        stmt = stmt.where(and_(*filters))
-        count_stmt = count_stmt.where(and_(*filters))
-
-    total = (
-        await self.db.execute(count_stmt)
-    ).scalar()
-
-    stmt = (
-        stmt
-        .order_by(Payment.created_at.desc())
-        .offset(skip)
-        .limit(limit)
-    )
-
-    result = await self.db.execute(stmt)
-
-    return result.scalars().all(), total
+    
+        result = await self.db.execute(stmt)
+    
+        return result.scalars().all(), total

@@ -21,50 +21,57 @@ const PaymentList = () => {
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
   useEffect(() => {
-    loadPayments();
-  }, []);
+    loadPayments(search,status,currentPage);
+  }, [currentPage, search, status]);
 
-  const loadPayments = async (
-    searchValue = search,
-    statusValue = status
-  ) => {
-    try {
-      setLoading(true);
+const loadPayments = async (
+  searchValue = search,
+  statusValue = status,
+  page = currentPage
+) => {
+  try {
+    setLoading(true);
 
-      const params = {};
+    const params = {
+      page,
+      page_size: 20,
+    };
 
-      if (searchValue.trim() !== "") {
-        params.query = searchValue;
-      }
-
-      if (statusValue !== "") {
-        params.status = statusValue;
-      }
-
-      const res = await getPayments(params);
-
-      if (Array.isArray(res)) {
-        setPayments(res);
-      } else {
-        setPayments(res.items || []);
-      }
-    } catch (err) {
-      console.error(err);
-      alert("Failed to load payments");
-    } finally {
-      setLoading(false);
+    if (searchValue.trim() !== "") {
+      params.query = searchValue;
     }
-  };
+
+    if (statusValue !== "") {
+      params.status = statusValue;
+    }
+
+    const res = await getPayments(params);
+
+    setPayments(res.items || []);
+    setTotalPages(res.pages || 1);
+
+  } catch (err) {
+    console.error(err);
+    alert("Failed to load payments");
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleSearch = () => {
-    loadPayments(search, status);
+    setCurrentPage(1);
+    loadPayments(search, status,1);
   };
 
   const handleClear = () => {
     setSearch("");
     setStatus("");
-    loadPayments("", "");
+    setCurrentPage(1);
+    loadPayments("", "",1);
   };
 
   const handleDelete = async (id) => {
@@ -79,7 +86,7 @@ const PaymentList = () => {
 
       alert("Payment deleted successfully");
 
-      loadPayments(search, status);
+      loadPayments(search, status, currentPage);
     } catch (err) {
       console.error(err);
 
@@ -277,8 +284,34 @@ const PaymentList = () => {
         </table>
 
       </div>
+      {/* Pagination */}
+
+<div className="flex justify-between items-center bg-white rounded-xl shadow p-4">
+
+  <button
+    onClick={() => setCurrentPage(currentPage - 1)}
+    disabled={currentPage === 1}
+    className="px-4 py-2 bg-gray-200 rounded-lg disabled:opacity-50"
+  >
+    Previous
+  </button>
+
+  <span className="font-medium">
+    Page {currentPage} of {totalPages}
+  </span>
+
+  <button
+    onClick={() => setCurrentPage(currentPage + 1)}
+    disabled={currentPage === totalPages}
+    className="px-4 py-2 bg-blue-600 text-white rounded-lg disabled:opacity-50"
+  >
+    Next
+  </button>
+
+</div>
 
     </div>
+    
   );
 };
 

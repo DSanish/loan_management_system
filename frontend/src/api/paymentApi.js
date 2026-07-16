@@ -4,7 +4,26 @@ import client from "./client";
    Payment List
 =========================== */
 
-export const getPayments = async (params = {}) => {
+export const getPayments = async (
+  page = 1,
+  pageSize = 20,
+  query = "",
+  status = ""
+) => {
+
+  const params = {
+    page,
+    page_size: pageSize,
+  };
+
+  if (query && query.trim() !== "") {
+    params.query = query;
+  }
+
+  if (status && status !== "") {
+    params.status = status;
+  }
+
   const res = await client.get("/payments", {
     params,
   });
