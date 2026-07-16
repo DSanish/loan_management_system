@@ -36,20 +36,12 @@ const loadPayments = async (
   try {
     setLoading(true);
 
-    const params = {
-      page,
-      page_size: 20,
-    };
-
-    if (searchValue.trim() !== "") {
-      params.query = searchValue;
-    }
-
-    if (statusValue !== "") {
-      params.status = statusValue;
-    }
-
-    const res = await getPayments(params);
+const res = await getPayments(
+  page,
+  20,
+  searchValue,
+  statusValue
+);
 
     setPayments(res.items || []);
     setTotalPages(res.pages || 1);
@@ -64,14 +56,12 @@ const loadPayments = async (
 
   const handleSearch = () => {
     setCurrentPage(1);
-    loadPayments(search, status,1);
   };
 
   const handleClear = () => {
     setSearch("");
     setStatus("");
     setCurrentPage(1);
-    loadPayments("", "",1);
   };
 
   const handleDelete = async (id) => {
