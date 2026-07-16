@@ -321,15 +321,32 @@ class PaymentRepository(BaseRepository[Payment]):
         filters = []
     
         if query:
+        
             stmt = stmt.join(Loan)
             count_stmt = count_stmt.join(Loan)
-    
-            filters.append(
-                or_(
-                    Payment.payment_number.ilike(f"%{query}%"),
-                    Loan.loan_number.ilike(f"%{query}%"),
+        
+            query = query.strip().upper()
+        
+            # Payment Number Search
+            if query.startswith("PAY"):
+                filters.append(
+                    Payment.payment_number.ilike(f"{query}%")
                 )
-            )
+        
+            # Loan Number Search
+            elif query.startswith("LN"):
+                filters.append(
+                    Loan.loan_number == query
+                )
+        
+            # Generic Search
+            else:
+                filters.append(
+                    or_(
+                        Payment.payment_number.ilike(f"%{query}%"),
+                        Loan.loan_number.ilike(f"%{query}%"),
+                    )
+                )
     
         if loan_id:
             filters.append(Payment.loan_id == loan_id)
