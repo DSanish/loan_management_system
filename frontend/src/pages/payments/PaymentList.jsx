@@ -22,6 +22,8 @@ const PaymentList = () => {
 
   const loadPayments = async () => {
     try {
+      setLoading(true);
+
       const res = await getPayments();
 
       if (Array.isArray(res)) {
@@ -49,13 +51,13 @@ const PaymentList = () => {
 
       alert("Payment deleted successfully");
 
-      loadPayments();
+      await loadPayments();
     } catch (err) {
       console.error(err);
 
       alert(
         err.response?.data?.detail ||
-          "Unable to delete payment."
+        "Unable to delete payment."
       );
     }
   };
@@ -102,7 +104,6 @@ const PaymentList = () => {
         <table className="w-full">
 
           <thead className="bg-gray-100">
-
             <tr>
               <th className="p-3 text-left">ID</th>
               <th className="p-3 text-left">Loan</th>
@@ -111,7 +112,6 @@ const PaymentList = () => {
               <th className="p-3 text-left">Due Date</th>
               <th className="p-3 text-center">Action</th>
             </tr>
-
           </thead>
 
           <tbody>
@@ -120,7 +120,7 @@ const PaymentList = () => {
 
               <tr>
                 <td
-                  colSpan="6"
+                  colSpan={6}
                   className="text-center py-10"
                 >
                   No Payments Found
@@ -157,7 +157,6 @@ const PaymentList = () => {
                   </td>
 
                   <td className="p-3">
-
                     <div className="flex justify-center gap-4">
 
                       {/* View */}
@@ -183,9 +182,7 @@ const PaymentList = () => {
                       {/* Delete */}
 
                       <button
-                        onClick={() =>
-                          handleDelete(payment.id)
-                        }
+                        onClick={() => handleDelete(payment.id)}
                         className="text-red-600 hover:text-red-800"
                         title="Delete"
                       >
@@ -193,7 +190,6 @@ const PaymentList = () => {
                       </button>
 
                     </div>
-
                   </td>
 
                 </tr>
