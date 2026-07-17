@@ -276,23 +276,34 @@ class PaymentWaiver(BaseModel):
     reason: str = Field(..., min_length=5)
 
 
+
+
 class PaymentResponse(BaseModel):
     id: int
     payment_number: str
+
     loan_id: int
+    loan_number: Optional[str] = None
+    customer_name: Optional[str] = None
+
     installment_number: Optional[int]
+
     amount: Decimal
     principal_paid: Optional[Decimal]
     interest_paid: Optional[Decimal]
     late_fee_paid: Optional[Decimal]
+
     due_date: date
     payment_date: Optional[date]
+
     status: PaymentStatus
     payment_method: Optional[PaymentMethod]
     transaction_reference: Optional[str]
+
     days_overdue: int
     late_fee: Optional[Decimal]
     waiver_amount: Optional[Decimal]
+
     created_at: datetime
 
     class Config:
