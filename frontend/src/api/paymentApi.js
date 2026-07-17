@@ -130,6 +130,27 @@ export const getCollectionSummary = async (
 };
 
 /* ===========================
+   Recent Collections
+=========================== */
+
+export const getRecentCollections = async (
+  page = 1,
+  pageSize = 10
+) => {
+  const res = await client.get(
+    "/payments/recent-collections",
+    {
+      params: {
+        page,
+        page_size: pageSize,
+      },
+    }
+  );
+
+  return res.data;
+};
+
+/* ===========================
    Apply Waiver
 =========================== */
 
