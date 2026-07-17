@@ -238,6 +238,39 @@ async def get_collection_summary(
 
 
 # ===============================
+# Recent Collections
+# ===============================
+@router.get("/recent-collections")
+async def recent_collections(
+    page: int = Query(1, ge=1),
+    page_size: int = Query(10, ge=1, le=100),
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    repo = PaymentRepository(db)
+
+    skip = (page - 1) * page_size
+
+    payments, total = await repo.get_recent_collections(
+        skip=skip,
+        limit=page_size,
+    )
+
+    return {
+        "total": total,
+        "page": page,
+        "page_size": page_size,
+        "pages": math.ceil(total / page_size) if total > 0 else 1,
+        "items": [
+            PaymentResponse.model_validate(
+                payment,
+                from_attributes=True,
+            )
+            for payment in payments
+        ],
+    }
+
+# ===============================
 # Apply Waiver
 # ===============================
 @router.post("/{payment_id}/waiver")
