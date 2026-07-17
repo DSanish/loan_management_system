@@ -77,29 +77,7 @@ async def record_payment(
     )
 
 
-# ===============================
-# Payment Details
-# ===============================
-@router.get("/{payment_id}", response_model=PaymentResponse)
-async def get_payment(
-    payment_id: int,
-    db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user),
-):
-    repo = PaymentRepository(db)
 
-    payment = await repo.get_by_id(payment_id)
-
-    if not payment:
-        raise HTTPException(
-            status_code=404,
-            detail="Payment not found",
-        )
-
-    return PaymentResponse.model_validate(
-        payment,
-        from_attributes=True,
-    )
 
 
 # ===============================
@@ -288,4 +266,29 @@ async def apply_waiver(
         payment_id,
         data,
         current_user.id,
+    )
+
+
+# ===============================
+# Payment Details
+# ===============================
+@router.get("/{payment_id}", response_model=PaymentResponse)
+async def get_payment(
+    payment_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    repo = PaymentRepository(db)
+
+    payment = await repo.get_by_id(payment_id)
+
+    if not payment:
+        raise HTTPException(
+            status_code=404,
+            detail="Payment not found",
+        )
+
+    return PaymentResponse.model_validate(
+        payment,
+        from_attributes=True,
     )

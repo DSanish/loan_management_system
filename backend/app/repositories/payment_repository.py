@@ -293,6 +293,48 @@ class PaymentRepository(BaseRepository[Payment]):
         )
     
     # ===========================
+    # Recent Collections
+    # ===========================
+    
+    async def get_recent_collections(
+        self,
+        skip: int = 0,
+        limit: int = 10,
+    ):
+    
+        count_stmt = (
+            select(func.count())
+            .select_from(Payment)
+            .where(Payment.status == PaymentStatus.PAID)
+        )
+    
+        total = (
+            await self.db.execute(count_stmt)
+        ).scalar()
+    
+        result = await self.db.execute(
+    
+            select(Payment)
+            .options(
+                joinedload(Payment.loan)
+                .joinedload(Loan.customer)
+            )
+            .where(
+                Payment.status == PaymentStatus.PAID
+            )
+            .order_by(
+                Payment.payment_date.desc()
+            )
+            .offset(skip)
+            .limit(limit)
+    
+        )
+    
+        return result.scalars().all(), total
+    
+    
+        
+    # ===========================
     # Search Payments
     # ===========================
     
