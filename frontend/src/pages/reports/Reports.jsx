@@ -256,3 +256,110 @@ const Reports = () => {
           </thead>
 
           <tbody>
+
+                        <tr>
+
+              <td
+                colSpan="6"
+                className="text-center py-12 text-gray-500"
+              >
+                No report data available.
+              </td>
+
+            </tr>
+
+          </tbody>
+
+        </table>
+
+        {/* Pagination */}
+
+        <div className="flex items-center justify-between px-6 py-4 border-t">
+
+          <button
+            className="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
+            disabled
+          >
+            Previous
+          </button>
+
+          <span className="text-gray-600">
+            Page 1 of 1
+          </span>
+
+          <button
+            className="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
+            disabled
+          >
+            Next
+          </button>
+
+        </div>
+
+      </div>
+
+      {/* Analytics Section */}
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+        <div className="bg-white rounded-xl shadow p-6">
+
+          <h3 className="text-lg font-semibold mb-4">
+            Monthly Loan Trend
+          </h3>
+
+          <div className="h-64 flex items-center justify-center border rounded-lg text-gray-400">
+            Chart will be displayed here
+          </div>
+
+        </div>
+
+        <div className="bg-white rounded-xl shadow p-6">
+
+          <h3 className="text-lg font-semibold mb-4">
+            Collection Analytics
+          </h3>
+
+          <div className="h-64 flex items-center justify-center border rounded-lg text-gray-400">
+            Chart will be displayed here
+          </div>
+
+        </div>
+
+      </div>
+
+      {/* Quick Reports */}
+
+      <div className="bg-white rounded-xl shadow p-6">
+
+        <h2 className="text-xl font-semibold mb-5">
+          Quick Reports
+        </h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+
+          <button className="border rounded-lg p-5 hover:bg-gray-50 transition">
+            📄 Customer Report
+          </button>
+
+          <button className="border rounded-lg p-5 hover:bg-gray-50 transition">
+            💰 Loan Report
+          </button>
+
+          <button className="border rounded-lg p-5 hover:bg-gray-50 transition">
+            💳 Payment Report
+          </button>
+
+          <button className="border rounded-lg p-5 hover:bg-gray-50 transition">
+            📊 Collection Report
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+  );
+};
+
+export default Reports;
