@@ -1,148 +1,3 @@
-// import {
-//   Users,
-//   BadgeDollarSign,
-//   CreditCard,
-//   TrendingUp,
-// } from "lucide-react";
-
-// const stats = [
-//   {
-//     title: "Total Customers",
-//     value: "1,248",
-//     icon: Users,
-//     color: "bg-blue-500",
-//   },
-//   {
-//     title: "Active Loans",
-//     value: "856",
-//     icon: BadgeDollarSign,
-//     color: "bg-green-500",
-//   },
-//   {
-//     title: "Monthly Collection",
-//     value: "₹12.8 Lakh",
-//     icon: CreditCard,
-//     color: "bg-orange-500",
-//   },
-//   {
-//     title: "Recovery Rate",
-//     value: "98.4%",
-//     icon: TrendingUp,
-//     color: "bg-purple-500",
-//   },
-// ];
-
-// const Dashboard = () => {
-//   return (
-//     <div className="space-y-8">
-
-//       {/* Heading */}
-//       <div>
-//         <h1 className="text-3xl font-bold text-gray-800">
-//           Dashboard
-//         </h1>
-
-//         <p className="text-gray-500 mt-1">
-//           Welcome to the Loan Management System Dashboard
-//         </p>
-//       </div>
-
-//       {/* Stats Cards */}
-//       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
-
-//         {stats.map((item) => {
-//           const Icon = item.icon;
-
-//           return (
-//             <div
-//               key={item.title}
-//               className="bg-white rounded-xl shadow-md p-6 flex items-center justify-between"
-//             >
-//               <div>
-//                 <p className="text-gray-500 text-sm">
-//                   {item.title}
-//                 </p>
-
-//                 <h2 className="text-3xl font-bold mt-2">
-//                   {item.value}
-//                 </h2>
-//               </div>
-
-//               <div
-//                 className={`${item.color} w-14 h-14 rounded-full flex items-center justify-center`}
-//               >
-//                 <Icon className="text-white" size={28} />
-//               </div>
-//             </div>
-//           );
-//         })}
-
-//       </div>
-
-//       {/* Recent Activity */}
-//       <div className="bg-white rounded-xl shadow-md p-6">
-
-//         <h2 className="text-xl font-semibold mb-4">
-//           Recent Activity
-//         </h2>
-
-//         <div className="space-y-4">
-
-//           <div className="flex justify-between border-b pb-3">
-//             <span>New Customer Registered</span>
-//             <span className="text-gray-500">
-//               5 minutes ago
-//             </span>
-//           </div>
-
-//           <div className="flex justify-between border-b pb-3">
-//             <span>Loan Approved</span>
-//             <span className="text-gray-500">
-//               15 minutes ago
-//             </span>
-//           </div>
-
-//           <div className="flex justify-between border-b pb-3">
-//             <span>EMI Payment Received</span>
-//             <span className="text-gray-500">
-//               1 hour ago
-//             </span>
-//           </div>
-
-//           <div className="flex justify-between">
-//             <span>Monthly Report Generated</span>
-//             <span className="text-gray-500">
-//               Today
-//             </span>
-//           </div>
-
-//         </div>
-
-//       </div>
-
-//       {/* Placeholder */}
-//       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
-//         <div className="bg-white rounded-xl shadow-md p-6 h-80 flex items-center justify-center">
-//           <p className="text-gray-400 text-lg">
-//             Loan Analytics Chart (Coming Soon)
-//           </p>
-//         </div>
-
-//         <div className="bg-white rounded-xl shadow-md p-6 h-80 flex items-center justify-center">
-//           <p className="text-gray-400 text-lg">
-//             Payment Statistics (Coming Soon)
-//           </p>
-//         </div>
-
-//       </div>
-
-//     </div>
-//   );
-// };
-
-// export default Dashboard;
-
 import { useEffect } from "react";
 import {
   Users,
@@ -152,17 +7,52 @@ import {
 } from "lucide-react";
 
 import useDashboardStore from "../../store/dashboardStore";
+import {
+  LineChart,
+  Line,
+  PieChart,
+  Pie,
+  Cell,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  Legend,
+} from "recharts";
 
 const Dashboard = () => {
   const {
     stats,
+  
+    loanBreakdown,
+    monthlyCollections,
+    loanTypeDistribution,
+    riskDistribution,
+  
     loading,
     error,
+  
     fetchDashboardStats,
+    fetchLoanBreakdown,
+    fetchMonthlyCollections,
+    fetchLoanTypeDistribution,
+    fetchRiskDistribution,
+  
   } = useDashboardStore();
 
   useEffect(() => {
+  
     fetchDashboardStats();
+  
+    fetchLoanBreakdown();
+  
+    fetchMonthlyCollections();
+  
+    fetchLoanTypeDistribution();
+  
+    fetchRiskDistribution();
+  
   }, []);
 
   if (loading) {
@@ -211,6 +101,15 @@ const Dashboard = () => {
       color: "bg-purple-500",
     },
   ];
+
+  const COLORS = [
+  "#2563eb",
+  "#16a34a",
+  "#ea580c",
+  "#9333ea",
+  "#dc2626",
+  "#0891b2",
+];
 
   return (
     <div className="space-y-8">
@@ -317,74 +216,203 @@ const Dashboard = () => {
 
       </div>
 
-      {/* Analytics */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    {/* Analytics */}
 
-        <div className="bg-white rounded-xl shadow-md p-6">
+<div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
 
-          <h2 className="text-xl font-semibold mb-4">
-            Loan Summary
-          </h2>
+  {/* Monthly Collections */}
 
-          <div className="space-y-3">
+  <div className="bg-white rounded-xl shadow-md p-6">
 
-            <div className="flex justify-between">
-              <span>Total Loans</span>
-              <span>{stats?.total_loans ?? 0}</span>
-            </div>
+    <h2 className="text-xl font-semibold mb-4">
+      Monthly Collections
+    </h2>
 
-            <div className="flex justify-between">
-              <span>Total Disbursed</span>
-              <span>
-                ₹{stats?.total_disbursed ?? 0}
-              </span>
-            </div>
+    <ResponsiveContainer
+      width="100%"
+      height={300}
+    >
 
-            <div className="flex justify-between">
-              <span>Outstanding</span>
-              <span>
-                ₹{stats?.total_outstanding ?? 0}
-              </span>
-            </div>
+      <LineChart
+        data={monthlyCollections}
+      >
 
-          </div>
+        <CartesianGrid strokeDasharray="3 3" />
 
-        </div>
+        <XAxis
+          dataKey="month"
+        />
 
-        <div className="bg-white rounded-xl shadow-md p-6">
+        <YAxis />
 
-          <h2 className="text-xl font-semibold mb-4">
-            Recovery Summary
-          </h2>
+        <Tooltip />
 
-          <div className="space-y-3">
+        <Legend />
 
-            <div className="flex justify-between">
-              <span>Total Collection</span>
-              <span>
-                ₹{stats?.total_collected ?? 0}
-              </span>
-            </div>
+        <Line
+          type="monotone"
+          dataKey="late_fees"
+          stroke="#2563eb"
+          strokeWidth={3}
+        />
 
-            <div className="flex justify-between">
-              <span>Collection Rate</span>
-              <span>
-                {stats?.collection_rate ?? 0}%
-              </span>
-            </div>
+      </LineChart>
 
-            <div className="flex justify-between">
-              <span>NPA Rate</span>
-              <span className="text-red-600">
-                {stats?.npa_rate ?? 0}%
-              </span>
-            </div>
+    </ResponsiveContainer>
 
-          </div>
+  </div>
 
-        </div>
+  {/* Loan Breakdown */}
 
-      </div>
+  <div className="bg-white rounded-xl shadow-md p-6">
+
+    <h2 className="text-xl font-semibold mb-4">
+      Loan Status Distribution
+    </h2>
+
+    <ResponsiveContainer
+      width="100%"
+      height={300}
+    >
+
+      <PieChart>
+
+        <Pie
+          data={loanBreakdown}
+          dataKey="count"
+          nameKey="status"
+          outerRadius={100}
+          label
+        >
+
+          {loanBreakdown.map(
+            (entry, index) => (
+
+              <Cell
+                key={index}
+                fill={
+                  COLORS[
+                    index % COLORS.length
+                  ]
+                }
+              />
+
+            )
+          )}
+
+        </Pie>
+
+        <Tooltip />
+
+        <Legend />
+
+      </PieChart>
+
+    </ResponsiveContainer>
+
+  </div>
+
+  {/* Loan Type */}
+
+  <div className="bg-white rounded-xl shadow-md p-6">
+
+    <h2 className="text-xl font-semibold mb-4">
+      Loan Type Distribution
+    </h2>
+
+    <ResponsiveContainer
+      width="100%"
+      height={300}
+    >
+
+      <PieChart>
+
+        <Pie
+          data={loanTypeDistribution}
+          dataKey="count"
+          nameKey="type"
+          outerRadius={100}
+          label
+        >
+
+          {loanTypeDistribution.map(
+            (entry, index) => (
+
+              <Cell
+                key={index}
+                fill={
+                  COLORS[
+                    index % COLORS.length
+                  ]
+                }
+              />
+
+            )
+          )}
+
+        </Pie>
+
+        <Tooltip />
+
+        <Legend />
+
+      </PieChart>
+
+    </ResponsiveContainer>
+
+  </div>
+
+  {/* Risk Distribution */}
+
+  <div className="bg-white rounded-xl shadow-md p-6">
+
+    <h2 className="text-xl font-semibold mb-4">
+      Risk Distribution
+    </h2>
+
+    <ResponsiveContainer
+      width="100%"
+      height={300}
+    >
+
+      <PieChart>
+
+        <Pie
+          data={riskDistribution}
+          dataKey="count"
+          nameKey="grade"
+          outerRadius={100}
+          label
+        >
+
+          {riskDistribution.map(
+            (entry, index) => (
+
+              <Cell
+                key={index}
+                fill={
+                  COLORS[
+                    index % COLORS.length
+                  ]
+                }
+              />
+
+            )
+          )}
+
+        </Pie>
+
+        <Tooltip />
+
+        <Legend />
+
+      </PieChart>
+
+    </ResponsiveContainer>
+
+  </div>
+
+</div>
 
     </div>
   );
