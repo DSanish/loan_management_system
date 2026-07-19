@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy import func, select
+from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database.session import get_db
@@ -50,3 +51,40 @@ async def reports_dashboard(
         "outstanding": float(outstanding or 0),
         "overdue": float(overdue or 0),
     }
+
+@router.get("/loans")
+async def loan_reports(
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    result = await db.execute(
+        select(Loan)
+        .options(selectinload(Loan.customer))
+        .order_by(Loan.created_at.desc())
+    )
+
+    loans = result.scalars().all()
+
+    data = []
+
+    for loan in loans:
+        customer_name = ""
+
+        if loan.customer:
+            customer_name = (
+                f"{loan.customer.first_name} {loan.customer.last_name}"
+            )
+
+        data.append(
+            {
+                "id": loan.id,
+                "loan_number": loan.loan_number,
+                "customer": customer_name,
+                "loan_amount": float(loan.principal_amount or 0),
+                "paid": float(loan.total_paid or 0),
+                "outstanding": float(loan.outstanding_principal or 0),
+                "status": str(loan.status),
+            }
+        )
+
+    return data

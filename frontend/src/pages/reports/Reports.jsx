@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import useReportStore from "../../store/reportStore";
 import {
   FileText,
   Download,
@@ -11,8 +12,13 @@ import {
 } from "lucide-react";
 
 const Reports = () => {
+  const {dashboard,loans,loading,fetchDashboard,fetchLoans,} = useReportStore();
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");
+  useEffect(() => {
+  fetchDashboard();
+  fetchLoans();
+  }, [fetchDashboard, fetchLoans]);
 
   return (
     <div className="space-y-6">
@@ -57,7 +63,7 @@ const Reports = () => {
               </p>
 
               <h2 className="text-3xl font-bold mt-2">
-                0
+                {loading ? "..." : dashboard?.total_customers ?? 0}
               </h2>
 
             </div>
@@ -82,7 +88,7 @@ const Reports = () => {
               </p>
 
               <h2 className="text-3xl font-bold mt-2">
-                0
+                {loading ? "..." : dashboard?.total_loans ?? 0}
               </h2>
 
             </div>
@@ -107,7 +113,9 @@ const Reports = () => {
               </p>
 
               <h2 className="text-3xl font-bold mt-2">
-                ₹0
+                  ₹{loading
+                   ? "..."
+                   : Number(dashboard?.total_collection ?? 0).toLocaleString()}
               </h2>
 
             </div>
@@ -132,7 +140,10 @@ const Reports = () => {
               </p>
 
               <h2 className="text-3xl font-bold mt-2">
-                0
+                   ₹{loading
+                    ? "..."
+                    : Number(dashboard?.overdue ?? 0).toLocaleString()}
+                
               </h2>
 
             </div>
@@ -256,17 +267,44 @@ const Reports = () => {
           </thead>
 
           <tbody>
-
-                        <tr>
-
-              <td
-                colSpan="6"
-                className="text-center py-12 text-gray-500"
-              >
-                No report data available.
-              </td>
-
-            </tr>
+              {loans.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan="6"
+                    className="text-center py-12 text-gray-500"
+                  >
+                    No report data available.
+                  </td>
+                </tr>
+              ) : (
+                loans.map((loan) => (
+                  <tr
+                    key={loan.id}
+                    className="border-t hover:bg-gray-50"
+                  >
+                    <td className="p-3">{loan.loan_number}</td>
+            
+                    <td className="p-3">{loan.customer}</td>
+            
+                    <td className="p-3">
+                      ₹{Number(loan.loan_amount).toLocaleString()}
+                    </td>
+            
+                    <td className="p-3">
+                      ₹{Number(loan.paid).toLocaleString()}
+                    </td>
+            
+                    <td className="p-3">
+                      ₹{Number(loan.outstanding).toLocaleString()}
+                    </td>
+            
+                    <td className="p-3">
+                      {loan.status.replace("LoanStatus.", "")}
+                    </td>
+                  </tr>
+                ))
+              )}
+                
 
           </tbody>
 

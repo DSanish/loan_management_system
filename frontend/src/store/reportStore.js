@@ -33,6 +33,7 @@ const useReportStore = create((set) => ({
       });
     }
   },
+  
 
   // ================= Loan Report =================
   fetchLoans: async () => {
