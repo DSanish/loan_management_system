@@ -88,3 +88,17 @@ async def loan_reports(
         )
 
     return data
+
+@router.get("/monthly-loans")
+async def monthly_loans(
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    return [
+        {"month": "Jan", "loans": 2},
+        {"month": "Feb", "loans": 5},
+        {"month": "Mar", "loans": 3},
+        {"month": "Apr", "loans": 7},
+        {"month": "May", "loans": 4},
+        {"month": "Jun", "loans": 6},
+    ]
