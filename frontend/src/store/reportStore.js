@@ -8,6 +8,7 @@ const useReportStore = create((set) => ({
   payments: [],
   collections: [],
   monthlyLoans: [],
+  collectionAnalytics: [],
 
   loading: false,
   error: null,
@@ -128,6 +129,29 @@ const useReportStore = create((set) => ({
     }
   },
 
+  // ================= Collection Analytics =================
+  fetchCollectionAnalytics: async () => {
+    set({ loading: true, error: null });
+  
+    try {
+      const data = await reportService.getCollectionAnalytics();
+  
+      set({
+        collectionAnalytics: data,
+        loading: false,
+      });
+  
+      return data;
+    } catch (error) {
+      console.error(error);
+  
+      set({
+        loading: false,
+        error: error.message || "Failed to load collection analytics",
+      });
+    }
+  },
+
   // ================= Export =================
   exportExcel: async () => {
     try {
@@ -161,6 +185,7 @@ const useReportStore = create((set) => ({
       payments: [],
       collections: [],
       monthlyLoans: [],
+      collectionAnalytics: [],
       loading: false,
       error: null,
     });

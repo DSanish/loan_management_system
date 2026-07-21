@@ -102,3 +102,17 @@ async def monthly_loans(
         {"month": "May", "loans": 4},
         {"month": "Jun", "loans": 6},
     ]
+
+@router.get("/collection-analytics")
+async def collection_analytics(
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    return [
+        {"month": "Jan", "collection": 120000},
+        {"month": "Feb", "collection": 180000},
+        {"month": "Mar", "collection": 150000},
+        {"month": "Apr", "collection": 220000},
+        {"month": "May", "collection": 170000},
+        {"month": "Jun", "collection": 250000},
+    ]

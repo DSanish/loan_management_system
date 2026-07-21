@@ -14,6 +14,8 @@ import {
   ResponsiveContainer,
   LineChart,
   Line,
+  BarChart,
+  Bar,
   CartesianGrid,
   XAxis,
   YAxis,
@@ -21,14 +23,15 @@ import {
 } from "recharts";
 
 const Reports = () => {
-  const {dashboard,loans, monthlyLoans,loading,fetchDashboard,fetchLoans,fetchMonthlyLoans,} = useReportStore();
+  const {dashboard,loans, monthlyLoans, collectionAnalytics,loading,fetchDashboard,fetchLoans,fetchMonthlyLoans,fetchCollectionAnalytics,} = useReportStore();
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");
   useEffect(() => {
   fetchDashboard();
   fetchLoans();
   fetchMonthlyLoans();
-  }, [fetchDashboard, fetchLoans,fetchMonthlyLoans]);
+  fetchCollectionAnalytics();
+  }, [fetchDashboard, fetchLoans,fetchMonthlyLoans,fetchCollectionAnalytics,]);
 
   return (
     <div className="space-y-6">
@@ -385,8 +388,23 @@ const Reports = () => {
             Collection Analytics
           </h3>
 
-          <div className="h-64 flex items-center justify-center border rounded-lg text-gray-400">
-            Chart will be displayed here
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={collectionAnalytics}>
+                <CartesianGrid strokeDasharray="3 3" />
+          
+                <XAxis dataKey="month" />
+          
+                <YAxis />
+          
+                <Tooltip />
+          
+                <Bar
+                  dataKey="collection"
+                  fill="#16a34a"
+                />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
 
         </div>

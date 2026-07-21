@@ -51,6 +51,16 @@ const reportService = {
     }
   },
 
+  // Collection Analytics
+  async getCollectionAnalytics() {
+    try {
+      return await reportApi.getCollectionAnalytics();
+    } catch (error) {
+      console.error("Error fetching collection analytics:", error);
+      throw error;
+    }
+  },
+
   // Export Excel
   async exportExcel() {
     try {

@@ -31,6 +31,12 @@ const reportApi = {
     return response.data;
   },
 
+  // Collection Analytics
+  getCollectionAnalytics: async () => {
+    const response = await client.get("/reports/collection-analytics");
+    return response.data;
+  },
+
   // Export Excel
   exportExcel: async () => {
     const response = await client.get("/reports/export/excel", {
