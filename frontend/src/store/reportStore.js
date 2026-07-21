@@ -7,6 +7,7 @@ const useReportStore = create((set) => ({
   loans: [],
   payments: [],
   collections: [],
+  monthlyLoans: [],
 
   loading: false,
   error: null,
@@ -104,6 +105,29 @@ const useReportStore = create((set) => ({
     }
   },
 
+  // ================= Monthly Loan Trend =================
+  fetchMonthlyLoans: async () => {
+    set({ loading: true, error: null });
+  
+    try {
+      const data = await reportService.getMonthlyLoans();
+  
+      set({
+        monthlyLoans: data,
+        loading: false,
+      });
+  
+      return data;
+    } catch (error) {
+      console.error(error);
+  
+      set({
+        loading: false,
+        error: error.message || "Failed to load monthly loan trend",
+      });
+    }
+  },
+
   // ================= Export =================
   exportExcel: async () => {
     try {
@@ -136,6 +160,7 @@ const useReportStore = create((set) => ({
       loans: [],
       payments: [],
       collections: [],
+      monthlyLoans: [],
       loading: false,
       error: null,
     });

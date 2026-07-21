@@ -25,6 +25,12 @@ const reportApi = {
     return response.data;
   },
 
+  // Monthly Loan Trend
+  getMonthlyLoans: async () => {
+    const response = await client.get("/reports/monthly-loans");
+    return response.data;
+  },
+
   // Export Excel
   exportExcel: async () => {
     const response = await client.get("/reports/export/excel", {

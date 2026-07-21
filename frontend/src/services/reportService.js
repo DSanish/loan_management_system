@@ -41,6 +41,16 @@ const reportService = {
     }
   },
 
+  // Monthly Loan Trend
+  async getMonthlyLoans() {
+    try {
+      return await reportApi.getMonthlyLoans();
+    } catch (error) {
+      console.error("Error fetching monthly loan trend:", error);
+      throw error;
+    }
+  },
+
   // Export Excel
   async exportExcel() {
     try {

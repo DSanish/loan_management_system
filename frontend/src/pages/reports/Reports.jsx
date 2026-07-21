@@ -10,15 +10,25 @@ import {
   IndianRupee,
   AlertTriangle,
 } from "lucide-react";
+import {
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  Tooltip,
+} from "recharts";
 
 const Reports = () => {
-  const {dashboard,loans,loading,fetchDashboard,fetchLoans,} = useReportStore();
+  const {dashboard,loans, monthlyLoans,loading,fetchDashboard,fetchLoans,fetchMonthlyLoans,} = useReportStore();
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");
   useEffect(() => {
   fetchDashboard();
   fetchLoans();
-  }, [fetchDashboard, fetchLoans]);
+  fetchMonthlyLoans();
+  }, [fetchDashboard, fetchLoans,fetchMonthlyLoans]);
 
   return (
     <div className="space-y-6">
@@ -346,9 +356,26 @@ const Reports = () => {
             Monthly Loan Trend
           </h3>
 
-          <div className="h-64 flex items-center justify-center border rounded-lg text-gray-400">
-            Chart will be displayed here
-          </div>
+         <div className="h-64">
+           <ResponsiveContainer width="100%" height="100%">
+             <LineChart data={monthlyLoans}>
+               <CartesianGrid strokeDasharray="3 3" />
+         
+               <XAxis dataKey="month" />
+         
+               <YAxis />
+         
+               <Tooltip />
+         
+               <Line
+                 type="monotone"
+                 dataKey="loans"
+                 stroke="#2563eb"
+                 strokeWidth={3}
+               />
+             </LineChart>
+           </ResponsiveContainer>
+         </div>
 
         </div>
 
