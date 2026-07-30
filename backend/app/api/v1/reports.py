@@ -6,6 +6,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.database.session import get_db
 from app.core.security import get_current_user
 from app.database.model import Customer, Loan, Payment, User
+from fastapi.responses import StreamingResponse
+import csv
+import io
+from openpyxl import Workbook
 
 router = APIRouter(
     prefix="/reports",
@@ -116,3 +120,53 @@ async def collection_analytics(
         {"month": "May", "collection": 170000},
         {"month": "Jun", "collection": 250000},
     ]
+
+@router.get("/export/csv")
+async def export_csv(
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    result = await db.execute(
+        select(Loan).options(selectinload(Loan.customer))
+    )
+
+    loans = result.scalars().all()
+
+    output = io.StringIO()
+
+    writer = csv.writer(output)
+
+    writer.writerow([
+        "Loan No",
+        "Customer",
+        "Loan Amount",
+        "Paid",
+        "Outstanding",
+        "Status",
+    ])
+
+    for loan in loans:
+        customer = ""
+
+        if loan.customer:
+            customer = f"{loan.customer.first_name} {loan.customer.last_name}"
+
+        writer.writerow([
+            loan.loan_number,
+            customer,
+            float(loan.principal_amount or 0),
+            float(loan.total_paid or 0),
+            float(loan.outstanding_principal or 0),
+            str(loan.status),
+        ])
+
+    output.seek(0)
+
+    return StreamingResponse(
+        iter([output.getvalue()]),
+        media_type="text/csv",
+        headers={
+            "Content-Disposition":
+            "attachment; filename=loan_report.csv"
+        },
+    )
