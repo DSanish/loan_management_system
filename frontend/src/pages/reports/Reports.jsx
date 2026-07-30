@@ -23,7 +23,7 @@ import {
 } from "recharts";
 
 const Reports = () => {
-  const {dashboard,loans, monthlyLoans, collectionAnalytics,loading,fetchDashboard,fetchLoans,fetchMonthlyLoans,fetchCollectionAnalytics,} = useReportStore();
+  const {dashboard,loans, monthlyLoans, collectionAnalytics,loading,fetchDashboard,fetchLoans,fetchMonthlyLoans,fetchCollectionAnalytics,exportExcel,exportPDF,exportCSV} = useReportStore();
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");
   useEffect(() => {
@@ -32,8 +32,28 @@ const Reports = () => {
   fetchMonthlyLoans();
   fetchCollectionAnalytics();
   }, [fetchDashboard, fetchLoans,fetchMonthlyLoans,fetchCollectionAnalytics,]);
-  const downloadReport = (type) => {
-  alert(`${type} Report Download Started`);
+
+  const downloadReport = async (type) => {
+  switch (type) {
+    case "Customer":
+      await exportPDF();
+      break;
+
+    case "Loan":
+      await exportExcel();
+      break;
+
+    case "Payment":
+      await exportCSV();
+      break;
+
+    case "Collection":
+      await exportPDF();
+      break;
+
+    default:
+      break;
+   }
   };
 
   return (
