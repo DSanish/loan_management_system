@@ -32,6 +32,9 @@ const Reports = () => {
   fetchMonthlyLoans();
   fetchCollectionAnalytics();
   }, [fetchDashboard, fetchLoans,fetchMonthlyLoans,fetchCollectionAnalytics,]);
+  const downloadReport = (type) => {
+  alert(`${type} Report Download Started`);
+  };
 
   return (
     <div className="space-y-6">
@@ -421,19 +424,27 @@ const Reports = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
 
-          <button className="border rounded-lg p-5 hover:bg-gray-50 transition">
+          <button
+          onClick={() => downloadReport("Customer")}
+          className="border rounded-lg p-5 hover:bg-blue-50 hover:border-blue-500 transition">
             📄 Customer Report
           </button>
 
-          <button className="border rounded-lg p-5 hover:bg-gray-50 transition">
+          <button
+          onClick={() => downloadReport("Loan")} 
+          className="border rounded-lg p-5 hover:bg-green-50  hover:border-green-500 transition">
             💰 Loan Report
           </button>
 
-          <button className="border rounded-lg p-5 hover:bg-gray-50 transition">
+          <button
+          onClick={() => downloadReport("Payment")} 
+          className="border rounded-lg p-5 hover:bg-yellow-50 hover:border-yellow-500 transition">
             💳 Payment Report
           </button>
 
-          <button className="border rounded-lg p-5 hover:bg-gray-50 transition">
+          <button
+          onClick={() => downloadReport("Collection")}
+          className="border rounded-lg p-5 hover:bg-purple-50 hover:border-purple-500 transition">
             📊 Collection Report
           </button>
 
