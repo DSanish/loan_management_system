@@ -170,6 +170,17 @@ if FRONTEND_DIST.exists():
     @app.get("/", include_in_schema=False)
     async def serve_frontend():
         return FileResponse(FRONTEND_DIST / "index.html")
+    
+    @app.get("/{full_path:path}", include_in_schema=False)
+    async def serve_react_app(full_path: str):
+        file_path = FRONTEND_DIST / full_path
+
+        if file_path.is_file():
+            return FileResponse(file_path)
+
+        return FileResponse(
+            FRONTEND_DIST / "index.html"
+        )
 
 # ===========================
 # Health Check
