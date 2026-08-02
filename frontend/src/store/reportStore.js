@@ -38,24 +38,28 @@ const useReportStore = create((set) => ({
   
 
   // ================= Loan Report =================
-  fetchLoans: async () => {
+  // ================= Loan Report =================
+  fetchLoans: async (search = "", status = "") => {
     set({ loading: true, error: null });
-
+  
     try {
-      const data = await reportService.getLoans();
-
+      const data = await reportService.getLoans(search, status);
+  
       set({
         loans: data,
         loading: false,
       });
-
+  
       return data;
     } catch (error) {
-      console.error(error);
-
+      console.error("Loan Report Error:", error);
+  
       set({
         loading: false,
-        error: error.message || "Failed to load loan report",
+        error:
+          error.response?.data?.detail ||
+          error.message ||
+          "Failed to load loan report",
       });
     }
   },

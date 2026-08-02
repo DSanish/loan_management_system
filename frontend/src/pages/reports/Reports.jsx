@@ -246,6 +246,7 @@ const Reports = () => {
           </select>
 
           <button
+            onClick={()=> fetchLoans(search, status)}
             className="bg-gray-800 text-white rounded-lg flex items-center justify-center gap-2"
           >
             <Filter size={18} />
