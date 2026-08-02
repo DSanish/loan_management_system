@@ -12,6 +12,9 @@ from app.middleware.middleware import (
     RequestLoggingMiddleware,
     SecurityHeadersMiddleware,
 )
+from pathlib import Path
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 
 # ===========================
 # API Routers
@@ -149,6 +152,25 @@ app.include_router(
     prefix=API_PREFIX,
 )
 
+# ==============================
+# React Frontend
+# ==============================
+
+BASE_DIR = Path(__file__).resolve().parents[2]
+FRONTEND_DIST = BASE_DIR / "frontend" / "dist"
+
+if FRONTEND_DIST.exists():
+
+    app.mount(
+        "/assets",
+        StaticFiles(directory=FRONTEND_DIST / "assets"),
+        name="assets",
+    )
+
+    @app.get("/", include_in_schema=False)
+    async def serve_frontend():
+        return FileResponse(FRONTEND_DIST / "index.html")
+
 # ===========================
 # Health Check
 # ===========================
@@ -164,14 +186,3 @@ async def health_check():
     }
 
 
-# ===========================
-# Root
-# ===========================
-
-@app.get("/")
-async def root():
-
-    return {
-        "message": f"Welcome to {settings.APP_NAME} API",
-        "docs": "/api/docs",
-    }
