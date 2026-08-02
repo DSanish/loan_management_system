@@ -4,10 +4,8 @@ import CustomerForm from "../../components/customers/CustomerForm";
 
 const AddCustomer = () => {
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    console.log("Customer Saved");
+  const handleSubmit = (data) => {
+    console.log("CUSTOMER DATA RECEIVED:", data);
   };
 
   return (

@@ -5,8 +5,31 @@ const CustomerForm = ({
   onSubmit,
   loading = false,
 }) => {
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.currentTarget);
+
+    const data = {
+      name: formData.get("name"),
+      phone: formData.get("phone"),
+      email: formData.get("email"),
+      dob: formData.get("dob"),
+      address: formData.get("address"),
+      loanType: formData.get("loanType"),
+      loanAmount: formData.get("loanAmount"),
+      loanTenure: formData.get("loanTenure"),
+    };
+
+    console.log("Customer Form Data:", data);
+
+    if (onSubmit) {
+      onSubmit(data);
+    }
+  };
+
   return (
-    <form onSubmit={onSubmit} className="space-y-8">
+    <form onSubmit={handleFormSubmit} className="space-y-8">
 
       {/* ================= Personal Information ================= */}
 
@@ -27,6 +50,7 @@ const CustomerForm = ({
               name="name"
               defaultValue={initialValues.name || ""}
               placeholder="Enter full name"
+              required
               className="w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -41,6 +65,7 @@ const CustomerForm = ({
               name="phone"
               defaultValue={initialValues.phone || ""}
               placeholder="Enter phone number"
+              required
               className="w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -78,7 +103,6 @@ const CustomerForm = ({
       {/* ================= Address ================= */}
 
       <div>
-
         <h2 className="text-xl font-semibold mb-6">
           Address
         </h2>
@@ -90,13 +114,11 @@ const CustomerForm = ({
           placeholder="Enter complete address"
           className="w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500"
         />
-
       </div>
 
       {/* ================= Loan Information ================= */}
 
       <div>
-
         <h2 className="text-xl font-semibold mb-6">
           Loan Information
         </h2>
@@ -104,7 +126,6 @@ const CustomerForm = ({
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
           <div>
-
             <label className="block mb-2 font-medium">
               Loan Type
             </label>
@@ -121,11 +142,9 @@ const CustomerForm = ({
               <option value="Education Loan">Education Loan</option>
               <option value="Vehicle Loan">Vehicle Loan</option>
             </select>
-
           </div>
 
           <div>
-
             <label className="block mb-2 font-medium">
               Loan Amount
             </label>
@@ -137,11 +156,9 @@ const CustomerForm = ({
               placeholder="Enter amount"
               className="w-full border rounded-lg px-4 py-3"
             />
-
           </div>
 
           <div>
-
             <label className="block mb-2 font-medium">
               Loan Tenure (Months)
             </label>
@@ -153,11 +170,9 @@ const CustomerForm = ({
               placeholder="Enter tenure"
               className="w-full border rounded-lg px-4 py-3"
             />
-
           </div>
 
         </div>
-
       </div>
 
       {/* ================= Buttons ================= */}
@@ -172,7 +187,6 @@ const CustomerForm = ({
           <Save size={18} />
 
           {loading ? "Saving..." : "Save Customer"}
-
         </button>
 
       </div>
