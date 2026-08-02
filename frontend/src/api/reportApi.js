@@ -8,8 +8,22 @@ const reportApi = {
   },
 
   // Loan Report
-  getLoans: async () => {
-    const response = await client.get("/reports/loans");
+  // Loan Report
+  getLoans: async (search = "", status = "") => {
+    const params = {};
+  
+    if (search && search.trim() !== "") {
+      params.search = search.trim();
+    }
+  
+    if (status && status !== "") {
+      params.status = status;
+    }
+  
+    const response = await client.get("/reports/loans", {
+      params,
+    });
+  
     return response.data;
   },
 

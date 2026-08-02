@@ -12,9 +12,9 @@ const reportService = {
   },
 
   // Loan Report
-  async getLoans() {
+  async getLoans(search = "", status = "") {
     try {
-      return await reportApi.getLoans();
+      return await reportApi.getLoans(search, status);
     } catch (error) {
       console.error("Error fetching loan report:", error);
       throw error;
